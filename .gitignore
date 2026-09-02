@@ -1,0 +1,9 @@
+.orchestration/
+.worktrees/
+.venv/
+.claude/
+__pycache__/
+*.egg-info/
+*.pyc
+build/
+dist/
