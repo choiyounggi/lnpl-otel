@@ -74,6 +74,14 @@ class _CollectorReceiptTestCase(unittest.TestCase):
         if self._out_dir.exists():
             shutil.rmtree(self._out_dir)
         self._out_dir.mkdir(parents=True)
+        # r1 F1: the image runs as a non-root, fixed uid (10001) — CI runner
+        # (ubuntu-latest, uid 1001) creates this dir with its own restrictive
+        # default mode, which uid 10001 cannot write into, so the `file`
+        # exporter fails to open /traces/out.json and the collector exits
+        # before ever logging "Everything is ready". macOS Docker Desktop
+        # maps bind-mount ownership leniently, which is why this only ever
+        # showed up in CI, not locally.
+        self._out_dir.chmod(0o777)
         self.addCleanup(shutil.rmtree, self._out_dir, ignore_errors=True)
 
         self._container = DockerContainer(_COLLECTOR_IMAGE)
@@ -85,7 +93,24 @@ class _CollectorReceiptTestCase(unittest.TestCase):
         self._container.waiting_for(
             LogMessageWaitStrategy("Everything is ready")
             .with_startup_timeout(_POLL_TIMEOUT_S))
-        self._container.start()
+        try:
+            self._container.start()
+        except Exception as exc:
+            # r1 F1: surface the container's own stderr/stdout in the
+            # failure — a bare wait-strategy timeout/exit error names no
+            # cause, so a future startup failure (permission, config,
+            # whatever) is diagnosable straight from the CI log instead of
+            # needing a re-run with manual `docker logs`.
+            stdout, stderr = b"", b""
+            try:
+                stdout, stderr = self._container.get_logs()
+            except Exception:
+                pass
+            raise AssertionError(
+                "otel-collector container failed to start: %s\n--- stdout ---\n%s\n"
+                "--- stderr ---\n%s"
+                % (exc, stdout.decode(errors="replace"),
+                   stderr.decode(errors="replace"))) from exc
         self.addCleanup(self._container.stop)
 
     def _export_via(self, protocol, container_port, service_name):
