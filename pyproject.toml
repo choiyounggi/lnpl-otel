@@ -10,7 +10,7 @@ readme = "README.md"
 license = { file = "LICENSE" }
 requires-python = ">=3.9"
 dependencies = [
-    "lnpl @ git+https://github.com/choiyounggi/linkly@ee767a2333595bdd75ef304a1ab3f029e36f1d23",
+    "lnpl @ git+https://github.com/choiyounggi/linkly@ecfa40869c0b7413129438639573ec9f4ab41133",
     "opentelemetry-sdk>=1.44,<2",
     "opentelemetry-exporter-otlp>=1.44,<2",
 ]
