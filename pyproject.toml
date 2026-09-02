@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "lnpl-otel"
+version = "0.1.0"
+description = "OTLP TraceExporter for lnpl (linkly#144)"
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.9"
+dependencies = [
+    "lnpl @ git+https://github.com/choiyounggi/linkly@ee767a2333595bdd75ef304a1ab3f029e36f1d23",
+    "opentelemetry-sdk>=1.44,<2",
+    "opentelemetry-exporter-otlp>=1.44,<2",
+]
+
+[project.optional-dependencies]
+test = ["testcontainers>=4.15,<5"]
+
+[project.entry-points."lnpl.exporters"]
+otlp = "lnpl_otel:make_exporter"
+
+[tool.setuptools]
+packages = ["lnpl_otel"]
