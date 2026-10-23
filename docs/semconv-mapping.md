@@ -3,7 +3,9 @@
 This table is the spec `lnpl_otel/exporter.py` implements against. Every row
 is an actual enumeration of `impl/lnpl/interp.py` in linkly (the source of
 every `name`/`kind`/`attrs` combination that can appear in a `trace_dict`),
-never a guess — line numbers cite the checkout pinned in `pyproject.toml`.
+never a guess. Line numbers cite linkly commit `ecfa408`, the commit this
+package pinned before it moved to the PyPI range `lnpl>=0.9,<0.10`;
+`interp.py` has changed since, so look the symbols up by name in newer lnpl.
 
 ## Span identity and kind
 
@@ -47,7 +49,7 @@ and cannot carry linkly's finer-grained kind on its own.
 
 Any `span.attrs` key not named above (a future linkly effect kind's own
 attrs) is still promoted generically as `lnpl.attr.<key>` — the table lists
-every key that exists in the pinned linkly commit, not a closed enum the
+every key that exists in linkly commit `ecfa408`, not a closed enum the
 exporter enforces. A non-primitive attribute value (not `str`/`bool`/`int`/
 `float`) is JSON-encoded rather than dropped, since `span.attrs` is not
 type-constrained the way OTel attributes are.

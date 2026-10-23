@@ -8,15 +8,15 @@ version = "0.1.0"
 description = "OTLP TraceExporter for lnpl (linkly#144)"
 readme = "README.md"
 license = { file = "LICENSE" }
-requires-python = ">=3.9"
+requires-python = ">=3.11"
 dependencies = [
-    "lnpl @ git+https://github.com/choiyounggi/linkly@ecfa40869c0b7413129438639573ec9f4ab41133",
+    "lnpl>=0.9,<0.10",
     "opentelemetry-sdk>=1.44,<2",
     "opentelemetry-exporter-otlp>=1.44,<2",
 ]
 
 [project.optional-dependencies]
-test = ["testcontainers>=4.15,<5"]
+test = ["testcontainers>=4.15,<5", "packaging>=24"]
 
 [project.entry-points."lnpl.exporters"]
 otlp = "lnpl_otel:make_exporter"
